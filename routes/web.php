@@ -13,7 +13,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    (new \App\Helpers\Telegram(new \Illuminate\Support\Facades\Http(), config('bots.bot_1')))->sendMessage( env('CHAT_ID'), '<b>Як справи???</b>');
+
+Route::get('/', function (\App\Helpers\Telegram $telegram) {
+    $telegram->sendMessage(env('CHAT_ID'), 'hellochen!!!');
+    $telegram->sendMessage(env('CHAT_ID'), 'cats_logo')->sendDocument(env('CHAT_ID'), 'cats_logo_1.png');
+    $telegram->sendDocument(env('CHAT_ID'), 'cats_logo_1.png');
+    $telegram->sendMessage(env('CHAT_ID'), 'cats_logo');
     return view('welcome');
 });

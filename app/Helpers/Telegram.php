@@ -9,6 +9,7 @@ class Telegram
 {
     protected object $http;
     protected string $bot;
+    protected array $button;
     protected int|null $reply_id;
 
     const URL = "https://api.telegram.org/bot";
@@ -17,6 +18,25 @@ class Telegram
     {
         $this->http = $http;
         $this->bot = $bot;
+        $this->setButtons();
+    }
+
+    protected function setButtons()
+    {
+        $this->button = [
+            'inline_keyboard' => [
+                [
+                    [
+                        'text' => 'button1',
+                        'callback_data' => '1'
+                    ],
+                    [
+                        'text' => 'button2',
+                        'callback_data' => '2'
+                    ]
+                ]
+            ]
+        ];
     }
 
     public function sendMessage(int $chat_id, string $message)
@@ -42,6 +62,23 @@ class Telegram
         ]);
 
         $this->reply_id = null;
+
+        return $this;
+    }
+
+    public function sendMessageWithButtons(int $chat_id, string $message, $button = null)
+    {
+        $button = $button ?? $this->button;
+        $http = $this->http::post(self::URL . $this->bot . "/sendMessage", [
+            'chat_id' => $chat_id,
+            'text' => $message,
+            'parse_mode' => 'html',
+            'reply_markup' => json_encode($button)
+        ]);
+
+        if (json_decode($http)->result->message_id) {
+            $this->reply_id = json_decode($http)->result->message_id;
+        }
 
         return $this;
     }

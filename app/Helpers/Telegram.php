@@ -83,4 +83,22 @@ class Telegram
         return $this;
     }
 
+    public function editMessageWithButtons(int $chat_id, string $message, $button = null)
+    {
+        $button = $button ?? $this->button;
+        $http = $this->http::post(self::URL . $this->bot . "/editMessageText", [
+            'chat_id' => $chat_id,
+            'text' => $message,
+            'parse_mode' => 'html',
+            'reply_markup' => json_encode($button),
+            'message_id' => $this->reply_id
+        ]);
+
+        if (json_decode($http)->result->message_id) {
+            $this->reply_id = json_decode($http)->result->message_id;
+        }
+
+        return $this;
+    }
+
 }

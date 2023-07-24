@@ -13,8 +13,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/', function (\App\Models\Order $order) {
+    return view('site.order', ['orders' => $order->active()->get()]);
+});
 
-Route::get('/', function (\App\Helpers\Telegram $telegram) {
+Route::group(['namespace' => 'App\Http\Controllers'], function () {
+    Route::post('/order/store', 'OrderController@store')->name('order.store');
+});
+
+/*Route::get('/', function (\App\Helpers\Telegram $telegram) {
     $telegram->sendMessage(env('CHAT_ID'), 'hellochen!!!');
     $telegram->sendMessage(env('CHAT_ID'), 'cats_logo')->sendDocument(env('CHAT_ID'), 'cats_logo_1.png');
     $telegram->sendMessageWithButtons(env('CHAT_ID'), 'cats_logo')->sendDocument(env('CHAT_ID'), 'cats_logo_1.png');
@@ -44,4 +51,4 @@ Route::get('/', function (\App\Helpers\Telegram $telegram) {
     return view('welcome');
 
 
-});
+});*/
